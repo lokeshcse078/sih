@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pandas
+matplotlib
+PyPDF2
+transformers
+torch
+langdetect
+deep-translator
+langcodes
+wordcloud
