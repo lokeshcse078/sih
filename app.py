@@ -1,6 +1,3 @@
-import os
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-
 import pandas as pd
 import re
 from PyPDF2 import PdfReader
@@ -535,5 +532,6 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
