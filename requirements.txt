@@ -21,7 +21,8 @@ deep-translator==1.11.4
 
 # Utilities / Logging
 tqdm==4.66.1
-rich==14.1.0
+rich==13.3.4
 markdown-it-py==4.0.0
 mdurl==0.1.2
 pygments==2.19.2
+
