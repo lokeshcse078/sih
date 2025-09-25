@@ -1,9 +1,9 @@
 import pandas as pd
 import re
 from PyPDF2 import PdfReader
-import plotly.express as px
+import plotly.express 
 from wordcloud import WordCloud
-import matplotlib.pyplot as plt
+import matplotlib.pyplot 
 import streamlit as st
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from langdetect import detect
@@ -256,7 +256,7 @@ def generate_wordcloud(comments, sentiment_name, bg_color="white"):
         contour_width=contour_width
     ).generate(text)
 
-    fig, ax = plt.subplots(figsize=(8, 4))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(8, 4))
     ax.imshow(wc, interpolation="bilinear")
     ax.axis("off")
     ax.set_title(f"{sentiment_name} Word Cloud", fontsize=16, fontweight="bold", pad=12)
@@ -289,8 +289,8 @@ div.stButton > button:first-child {
     background-color: #002147; 
     color: white !important; 
     font-weight: bold;
-    border-radius: 8px;
-    padding: 10px 20px;
+    border-radius: 8plotly.express;
+    padding: 10plotly.express 20plotly.express;
 }
 div.stButton > button:hover {
     background-color: #004080; 
@@ -300,9 +300,9 @@ div.stdownload_button > button {
     background-color: #002147;  
     color: white !important;  
     font-weight: bold;
-    border-radius: 8px;
-    padding: 10px 20px;
-    margin-top: 10px;
+    border-radius: 8plotly.express;
+    padding: 10plotly.express 20plotly.express;
+    margin-top: 10plotly.express;
 }
 div.stdownload_button > button:hover { 
     background-color: #004080; 
@@ -331,30 +331,30 @@ page_bg = f"""
     align-items: center;
     justify-content: flex-start;
     background: linear-gradient(to right, #FF9933, #FFFFFF, #138808);
-    padding: 12px 20px;
-    border-bottom: 4px solid #002147;
+    padding: 12plotly.express 20plotly.express;
+    border-bottom: 4plotly.express solid #002147;
 }}
 .header-bar img {{
-    height: 55px;
-    margin-right: 18px;
+    height: 55plotly.express;
+    margin-right: 18plotly.express;
 }}
 .header-bar h1 {{
-    font-size: 26px;
+    font-size: 26plotly.express;
     font-weight: bold;
     font-family: "Georgia", "Times New Roman", serif; 
     color: #002147;
     margin: 0;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.6plotly.express;
 }}
 .black-warning {{
     background-color: #000000;
     color: #ffffff;
-    padding: 12px 18px;
-    border-radius: 8px;
-    font-size: 16px;
+    padding: 12plotly.express 18plotly.express;
+    border-radius: 8plotly.express;
+    font-size: 16plotly.express;
     font-weight: 500;
-    margin: 15px 0;
-    border-left: 6px solid #FFCC00;
+    margin: 15plotly.express 0;
+    border-left: 6plotly.express solid #FFCC00;
 }}
 </style>
 
@@ -477,13 +477,13 @@ else:
                     sentiment_counts = df["Sentiment_Label"].value_counts().reset_index()
                     sentiment_counts.columns = ["Sentiment", "Count"]
 
-                    fig_pie = px.pie(sentiment_counts, names="Sentiment", values="Count",
+                    fig_pie = plotly.express.pie(sentiment_counts, names="Sentiment", values="Count",
                                     color="Sentiment",
                                     color_discrete_map={"Positive": "green", "Neutral": "gray", "Negative": "red"},
                                     hole=0.4, title="Sentiment Distribution")
                     st.plotly_chart(fig_pie, use_container_width=True)
 
-                    fig_bar = px.bar(sentiment_counts, x="Sentiment", y="Count", color="Sentiment",
+                    fig_bar = plotly.express.bar(sentiment_counts, x="Sentiment", y="Count", color="Sentiment",
                                     color_discrete_map={"Positive": "green", "Neutral": "gray", "Negative": "red"},
                                     text="Count", title="Sentiment Count Comparison")
                     fig_bar.update_traces(textposition="outside")
@@ -493,11 +493,11 @@ else:
                     lang_counts = df["Language"].value_counts().reset_index()
                     lang_counts.columns = ["Language", "Count"]
 
-                    fig_lang_pie = px.pie(lang_counts, names="Language", values="Count",
+                    fig_lang_pie = plotly.express.pie(lang_counts, names="Language", values="Count",
                                         hole=0.3, title="Language Distribution of Comments")
                     st.plotly_chart(fig_lang_pie, use_container_width=True)
 
-                    fig_lang_bar = px.bar(lang_counts, x="Language", y="Count", color="Language",
+                    fig_lang_bar = plotly.express.bar(lang_counts, x="Language", y="Count", color="Language",
                                         text="Count", title="Language Count Comparison")
                     fig_lang_bar.update_traces(textposition="outside")
                     st.plotly_chart(fig_lang_bar, use_container_width=True)
@@ -505,7 +505,7 @@ else:
                     # ---------------- Sentiment + Language Combined ----------------
                     combined_counts = df.groupby(["Language", "Sentiment_Label"]).size().reset_index(name="Count")
 
-                    fig_combined = px.bar(combined_counts, x="Language", y="Count",
+                    fig_combined = plotly.express.bar(combined_counts, x="Language", y="Count",
                                         color="Sentiment_Label", barmode="stack",
                                         title="Sentiment Breakdown per Language",
                                         color_discrete_map={"Positive": "green", "Neutral": "gray", "Negative": "red"})
@@ -532,6 +532,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
