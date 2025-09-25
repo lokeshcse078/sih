@@ -58,12 +58,18 @@ def send_otp(email):
 # ------------------------- Model Loading -------------------------
 @st.cache_resource
 def load_summarizer():
-    """Load T5 model from GitHub / HuggingFace repo"""
-    model_url = "https://huggingface.co/<username>/<repo>/resolve/main/t5_model/"
-    tokenizer = AutoTokenizer.from_pretrained(model_url)
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_url)
-    return pipeline("summarization", model=model, tokenizer=tokenizer)
-
+    """Load FLAN-T5 model from Hugging Face Hub"""
+    # Replace with your Hugging Face repo/model ID
+    model_id = "username/flan-t5-custom"  
+    
+    # Load tokenizer and model directly from Hugging Face
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_id)
+    
+    # Create a summarization pipeline
+    summarizer = pipeline("summarization", model=model, tokenizer=tokenizer)
+    
+    return summarizer
 @st.cache_data
 def load_pickle():
     """Load sentiment model pickle from GitHub"""
@@ -529,3 +535,4 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
