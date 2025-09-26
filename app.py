@@ -28,14 +28,12 @@ SMTP_EMAIL = st.secrets["SMTP_EMAIL"]
 SMTP_PASSWORD = st.secrets["SMTP_PASSWORD"]
 
 def send_otp(email):
-    otp = str(random.randint(100000, 999999))  # always keep OTP as string
-    st.session_state.generated_otp = otp       # save in session_state
-    # TODO: actually send the OTP to email here
+    otp = str(random.randint(100000, 999999))  # always keep as string
+    st.session_state.generated_otp = otp
     print("DEBUG OTP:", otp)  # remove in production
     return otp
 
 def verify_otp(email, otp_input):
-    """Check entered OTP against stored OTP"""
     return st.session_state.get("generated_otp") == otp_input.strip()
 
 # ------------------------- Model Loading -------------------------
@@ -210,39 +208,50 @@ page_bg = f"""
 """
 st.markdown(page_bg, unsafe_allow_html=True)
 
-# ================= Login/Register with OTP =================
-if "logged_in" not in st.session_state: st.session_state.logged_in = False
-if "otp_verified" not in st.session_state: st.session_state.otp_verified = False
+for key, val in [("logged_in", False), ("otp_verified", False)]:
+    if key not in st.session_state:
+        st.session_state[key] = val
 
 if not st.session_state.logged_in:
     tab_login, tab_register = st.tabs(["🔑 Login","📝 Register"])
     
+    # ------------------ LOGIN ------------------
     with tab_login:
         user_email = st.text_input("Email")
         pwd = st.text_input("Password", type="password")
         if st.button("Login"):
             try:
-                res = supabase.auth.sign_in_with_password({"email":user_email,"password":pwd})
-                if res.user: st.session_state.logged_in = True; st.session_state.username=user_email; st.success("Login successful!"); st.rerun()
-                else: st.error("Invalid email or password")
-            except: st.error("Login failed. Please try again.")
+                res = supabase.auth.sign_in_with_password({"email": user_email, "password": pwd})
+                if res.user:
+                    st.session_state.logged_in = True
+                    st.session_state.username = user_email
+                    st.success("Login successful!")
+                    st.rerun()
+                else:
+                    st.error("Invalid email or password")
+            except Exception as e:
+                st.error(f"Login failed: {e}")
     
+    # ------------------ REGISTER ------------------
     with tab_register:
         new_email = st.text_input("New Email")
         new_pwd = st.text_input("New Password", type="password")
-    
+
         if st.button("Send OTP"):
-            try:
-                send_otp(new_email)
-                st.session_state.temp_email = new_email
-                st.session_state.temp_pwd = new_pwd
-                st.success(f"OTP sent to {new_email}")
-            except Exception as e:
-                st.error(f"Failed to send OTP: {e}")
-    
+            if not new_email or not new_pwd:
+                st.warning("Please enter email and password before sending OTP.")
+            else:
+                try:
+                    send_otp(new_email)
+                    st.session_state.temp_email = new_email
+                    st.session_state.temp_pwd = new_pwd
+                    st.success(f"OTP sent to {new_email}")
+                except Exception as e:
+                    st.error(f"Failed to send OTP: {e}")
+
         if "temp_email" in st.session_state:
             otp_input = st.text_input("Enter OTP")
-    
+
             if st.button("Verify OTP"):
                 if otp_input:
                     if verify_otp(st.session_state.temp_email, otp_input):
@@ -251,13 +260,13 @@ if not st.session_state.logged_in:
                                 "email": st.session_state.temp_email,
                                 "password": st.session_state.temp_pwd
                             })
-    
+
                             if res and getattr(res, "user", None):
                                 st.success("Registration successful! Please login.")
+                                st.session_state.otp_verified = True
                                 # cleanup
                                 for key in ["temp_email", "temp_pwd", "generated_otp"]:
-                                    if key in st.session_state:
-                                        del st.session_state[key]
+                                    st.session_state.pop(key, None)
                             else:
                                 st.error("Registration failed. Email may already exist.")
                         except Exception as e:
@@ -267,11 +276,16 @@ if not st.session_state.logged_in:
                 else:
                     st.warning("Please enter the OTP before verifying.")
 
+            if st.button("Resend OTP"):
+                send_otp(st.session_state.temp_email)
+                st.success(f"New OTP sent to {st.session_state.temp_email}")
 
-
+# ------------------ LOGGED IN ------------------
 else:
     st.sidebar.success(f"Logged in as {st.session_state.username}")
-    if st.sidebar.button("Logout"): st.session_state.logged_in=False; st.rerun()
+    if st.sidebar.button("Logout"):
+        st.session_state.logged_in = False
+        st.rerun()
 
     uploaded_file = st.file_uploader("Upload PDF or TXT file", type=["pdf","txt"])
     comments=[]
@@ -378,6 +392,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
