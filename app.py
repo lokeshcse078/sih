@@ -359,7 +359,7 @@ else:
                                                                         range=["green","gray","red"])),
                         tooltip=["Sentiment","Count"]
                     )
-                    st.altair_chart(fig_pie, width="stretch")
+                    st.altair_chart(fig_pie,use_container_width=True)
 
                     fig_bar = alt.Chart(sentiment_counts).mark_bar().encode(
                         x="Sentiment:N",
@@ -368,7 +368,7 @@ else:
                                                                         range=["green","gray","red"])),
                         tooltip=["Sentiment","Count"]
                     )
-                    st.altair_chart(fig_bar, width="stretch")
+                    st.altair_chart(fig_bar, use_container_width=True)
 
                     # Language Distribution
                     lang_counts = df["Language"].value_counts().reset_index()
@@ -380,7 +380,7 @@ else:
                         color="Language:N",
                         tooltip=["Language","Count"]
                     )
-                    st.altair_chart(fig_lang_bar, width="stretch")
+                    st.altair_chart(fig_lang_bar, use_container_width=True)
 
                     # Combined Sentiment + Language
                     combined_counts = df.groupby(["Language","Sentiment_Label"]).size().reset_index(name="Count")
@@ -391,7 +391,7 @@ else:
                                                                              range=["green","gray","red"])),
                         tooltip=["Language","Sentiment_Label","Count"]
                     )
-                    st.altair_chart(fig_combined, width="stretch")
+                    st.altair_chart(fig_combined, use_container_width=True)
 
                 with tab3:
                     for sentiment in ["Positive","Neutral","Negative"]:
@@ -412,6 +412,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
