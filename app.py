@@ -12,6 +12,8 @@ from deep_translator import GoogleTranslator
 import base64
 import requests
 from io import BytesIO
+import bcrypt
+from datetime import datetime
 import random
 import smtplib
 from email.message import EmailMessage
@@ -401,6 +403,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
