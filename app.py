@@ -251,7 +251,7 @@ if not st.session_state.logged_in:
     otp_input = st.text_input("Enter OTP")
 
     if st.button("Verify OTP"):
-        if otp_input:  # ensure input is not empty
+        if(otp_input):  # ensure input is not empty
             if verify_otp(st.session_state.temp_email, otp_input.strip()):
                 try:
                     res = supabase.auth.sign_up({
@@ -383,6 +383,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
