@@ -248,7 +248,7 @@ if not st.session_state.logged_in:
                 st.error("Failed to send OTP. Check email settings.")
         
         if "temp_email" in st.session_state:
-    otp_input = st.text_input("Enter OTP")
+            otp_input = st.text_input("Enter OTP")
 
     if st.button("Verify OTP"):
         if(otp_input):  # ensure input is not empty
@@ -383,6 +383,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
