@@ -62,9 +62,11 @@ def load_summarizer():
 
 @st.cache_data
 def load_pickle():
-    url = "https://github.com/lokeshcse078/sih/blob/main/sentiment_model.pkl"
+    url = "https://github.com/lokeshcse078/sih/raw/main/sentiment_model.pkl"
     r = requests.get(url)
+    r.raise_for_status()  # ensure the request succeeded
     return pd.read_pickle(BytesIO(r.content))
+
 
 # ------------------------- PDF / TXT Reading -------------------------
 def read_pdf(file):
@@ -410,6 +412,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
