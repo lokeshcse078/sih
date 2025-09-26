@@ -344,7 +344,7 @@ else:
                 tab1, tab2, tab3, tab4 = st.tabs(["📋 Data","📈 Charts","☁ Word Clouds","📝 Summary"])
 
                 with tab1:
-                    st.dataframe(df[["Original_Comment","Language","Sentiment_Label"]], use_container_width=True, height=400)
+                    st.dataframe(df[["Original_Comment","Language","Sentiment_Label"]], width="stretch", height=400)
                     st.download_button("📥 Download CSV", data=df.to_csv(index=False).encode("utf-8"),
                                        file_name="sentiment_results.csv", mime="text/csv")
 
@@ -359,7 +359,7 @@ else:
                                                                         range=["green","gray","red"])),
                         tooltip=["Sentiment","Count"]
                     )
-                    st.altair_chart(fig_pie, use_container_width=True)
+                    st.altair_chart(fig_pie, width="stretch")
 
                     fig_bar = alt.Chart(sentiment_counts).mark_bar().encode(
                         x="Sentiment:N",
@@ -368,7 +368,7 @@ else:
                                                                         range=["green","gray","red"])),
                         tooltip=["Sentiment","Count"]
                     )
-                    st.altair_chart(fig_bar, use_container_width=True)
+                    st.altair_chart(fig_bar, width="stretch")
 
                     # Language Distribution
                     lang_counts = df["Language"].value_counts().reset_index()
@@ -380,7 +380,7 @@ else:
                         color="Language:N",
                         tooltip=["Language","Count"]
                     )
-                    st.altair_chart(fig_lang_bar, use_container_width=True)
+                    st.altair_chart(fig_lang_bar, width="stretch")
 
                     # Combined Sentiment + Language
                     combined_counts = df.groupby(["Language","Sentiment_Label"]).size().reset_index(name="Count")
@@ -391,7 +391,7 @@ else:
                                                                              range=["green","gray","red"])),
                         tooltip=["Language","Sentiment_Label","Count"]
                     )
-                    st.altair_chart(fig_combined, use_container_width=True)
+                    st.altair_chart(fig_combined, width="stretch")
 
                 with tab3:
                     for sentiment in ["Positive","Neutral","Negative"]:
@@ -412,6 +412,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
