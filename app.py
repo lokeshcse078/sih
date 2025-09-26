@@ -239,7 +239,7 @@ if not st.session_state.logged_in:
             if email and pwd:
                 try:
                     # Fetch user row
-                    user = supabase.table("users").select("*").eq("email", email).single().execute()
+                    user = supabase.table("sih").select("*").eq("email", email).single().execute()
                     if user.data:
                         stored_hash = user.data["password_hash"]
                         if bcrypt.checkpw(pwd.encode(), stored_hash.encode()):
@@ -410,6 +410,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
