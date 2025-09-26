@@ -262,18 +262,32 @@ if not st.session_state.logged_in:
             otp_input = st.text_input("Enter OTP")
             if st.button("Verify OTP"):
                 if verify_otp(st.session_state.temp_email, int(otp_input)):
-                    # Register user in Supabase
                     try:
-                        res = supabase.auth.sign_up({"email": st.session_state.temp_email,
-                                                     "password": st.session_state.temp_pwd})
+                        # Step 1: Register in Supabase Auth
+                        res = supabase.auth.sign_up({
+                            "email": st.session_state.temp_email,
+                            "password": st.session_state.temp_pwd
+                        })
+                
                         if res.user is not None:
+                            # Step 2: Hash the password before storing in DB
+                            hashed_pwd = bcrypt.hashpw(st.session_state.temp_pwd.encode(), bcrypt.gensalt()).decode()
+                
+                            # Step 3: Insert into custom 'users' table
+                            supabase.table("sih").insert({
+                                "email": st.session_state.temp_email,
+                                "password_hash": hashed_pwd,
+                                "created_at": datetime.utcnow().isoformat()
+                            }).execute()
+                
                             st.success("Registration successful! Please login.")
+                            # Cleanup
                             del st.session_state.temp_email
                             del st.session_state.temp_pwd
                         else:
                             st.error("Registration failed. Email may already exist.")
-                    except:
-                        st.error("Error registering user in Supabase")
+                    except Exception as e:
+                        st.error(f"Error registering user in Supabase: {e}")
                 else:
                     st.error("Invalid OTP")
 
@@ -387,6 +401,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
