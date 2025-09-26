@@ -237,7 +237,8 @@ if not st.session_state.logged_in:
         pwd = st.text_input("Password", type="password")
         if st.button("Login"):
             try:
-                res = supabase.auth.sign_in_with_password({"email": user_email, "password": pwd})
+                qpwd = bcrypt.hashpw(pwd, bcrypt.gensalt()).decode()
+                res = supabase.auth.sign_in_with_password({"email": user_email, "password": qpwd})
                 if res.user is not None:
                     st.session_state.logged_in = True
                     st.session_state.username = user_email
@@ -402,6 +403,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
