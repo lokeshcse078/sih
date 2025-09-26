@@ -233,21 +233,28 @@ if not st.session_state.logged_in:
     tab_login, tab_register = st.tabs(["🔑 Login", "📝 Register"])
 
     with tab_login:
-        user_email = st.text_input("Email")
-        pwd = st.text_input("Password", type="password")
-        if st.button("Login"):
-            try:
-                qpwd = bcrypt.hashpw(pwd, bcrypt.gensalt()).decode()
-                res = supabase.auth.sign_in_with_password({"email": user_email, "password": qpwd})
-                if res.user is not None:
-                    st.session_state.logged_in = True
-                    st.session_state.username = user_email
-                    st.success("Login successful!")
-                    st.rerun()
-                else:
-                    st.error("Invalid email or password")
-            except:
-                st.error("Login failed. Please try again.")
+        email = st.text_input("Email", key="login_email")
+        pwd = st.text_input("Password", type="password", key="login_pwd")
+        if st.button("Login", key="login_btn"):
+            if email and pwd:
+                try:
+                    # Fetch user row
+                    user = supabase.table("users").select("*").eq("email", email).single().execute()
+                    if user.data:
+                        stored_hash = user.data["password_hash"]
+                        if bcrypt.checkpw(pwd.encode(), stored_hash.encode()):
+                            st.session_state.logged_in = True
+                            st.session_state.username = email
+                            st.success("Login successful!")
+                            st.rerun()
+                        else:
+                            st.error("Incorrect password")
+                    else:
+                        st.error("Email not registered")
+                except Exception as e:
+                    st.error(f"Login error: {e}")
+            else:
+                st.warning("Enter email and password")
 
     with tab_register:
         new_email = st.text_input("New Email")
@@ -403,6 +410,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
