@@ -28,23 +28,15 @@ SMTP_EMAIL = st.secrets["SMTP_EMAIL"]
 SMTP_PASSWORD = st.secrets["SMTP_PASSWORD"]
 
 def send_otp(email):
-    otp = random.randint(100000, 999999)
-    OTP_STORE[email] = otp
-    
-    msg = EmailMessage()
-    msg['Subject'] = "Your OTP for Registration"
-    msg['From'] = SMTP_EMAIL
-    msg['To'] = email
-    msg.set_content(f"Your OTP for registration is: {otp}")
-    
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-        smtp.login(SMTP_EMAIL, SMTP_PASSWORD)
-        smtp.send_message(msg)
-    
+    otp = str(random.randint(100000, 999999))  # always keep OTP as string
+    st.session_state.generated_otp = otp       # save in session_state
+    # TODO: actually send the OTP to email here
+    print("DEBUG OTP:", otp)  # remove in production
     return otp
 
-def verify_otp(email, otp):
-    return OTP_STORE.get(email) == otp
+def verify_otp(email, otp_input):
+    """Check entered OTP against stored OTP"""
+    return st.session_state.get("generated_otp") == otp_input.strip()
 
 # ------------------------- Model Loading -------------------------
 @st.cache_resource
@@ -238,6 +230,7 @@ if not st.session_state.logged_in:
     with tab_register:
         new_email = st.text_input("New Email")
         new_pwd = st.text_input("New Password", type="password")
+    
         if st.button("Send OTP"):
             try:
                 send_otp(new_email)
@@ -246,12 +239,13 @@ if not st.session_state.logged_in:
                 st.success(f"OTP sent to {new_email}")
             except Exception as e:
                 st.error(f"Failed to send OTP: {e}")
+    
         if "temp_email" in st.session_state:
             otp_input = st.text_input("Enter OTP")
     
             if st.button("Verify OTP"):
-                if otp_input:  # ensure not empty
-                    if verify_otp(st.session_state.temp_email, otp_input.strip()):
+                if otp_input:
+                    if verify_otp(st.session_state.temp_email, otp_input):
                         try:
                             res = supabase.auth.sign_up({
                                 "email": st.session_state.temp_email,
@@ -260,17 +254,19 @@ if not st.session_state.logged_in:
     
                             if res and getattr(res, "user", None):
                                 st.success("Registration successful! Please login.")
-                                del st.session_state.temp_email
-                                del st.session_state.temp_pwd
+                                # cleanup
+                                for key in ["temp_email", "temp_pwd", "generated_otp"]:
+                                    if key in st.session_state:
+                                        del st.session_state[key]
                             else:
                                 st.error("Registration failed. Email may already exist.")
-    
                         except Exception as e:
                             st.error(f"Error registering user in Supabase: {e}")
                     else:
                         st.error("Invalid OTP. Please try again.")
                 else:
                     st.warning("Please enter the OTP before verifying.")
+
 
 
 else:
@@ -382,6 +378,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
