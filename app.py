@@ -54,7 +54,7 @@ def verify_otp(email, entered_otp):
 # ------------------------- Model Loading -------------------------
 @st.cache_resource
 def load_summarizer():
-    model_id = "https://huggingface.co/lk10308/t5"  
+    model_id = "lk10308/t5"  # Hugging Face repo ID
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_id)
     summarizer = pipeline("summarization", model=model, tokenizer=tokenizer)
@@ -412,6 +412,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
