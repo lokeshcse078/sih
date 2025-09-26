@@ -248,14 +248,31 @@ if not st.session_state.logged_in:
                 st.error("Failed to send OTP. Check email settings.")
         
         if "temp_email" in st.session_state:
-            otp_input = st.text_input("Enter OTP")
-            if st.button("Verify OTP"):
-                if verify_otp(st.session_state.temp_email,int(otp_input)):
-                    try:
-                        res = supabase.auth.sign_up({"email":st.session_state.temp_email,"password":st.session_state.temp_pwd})
-                        if res.user: st.success("Registration successful! Please login."); del st.session_state.temp_email; del st.session_state.temp_pwd
-                        else: st.error("Registration failed. Email may already exist.")
-                    except: st.error("Error registering user in Supabase")
+    otp_input = st.text_input("Enter OTP")
+
+    if st.button("Verify OTP"):
+        if otp_input:  # ensure input is not empty
+            if verify_otp(st.session_state.temp_email, otp_input.strip()):
+                try:
+                    res = supabase.auth.sign_up({
+                        "email": st.session_state.temp_email,
+                        "password": st.session_state.temp_pwd
+                    })
+
+                    if res and getattr(res, "user", None):
+                        st.success("Registration successful! Please login.")
+                        del st.session_state.temp_email
+                        del st.session_state.temp_pwd
+                    else:
+                        st.error("Registration failed. Email may already exist.")
+
+                except Exception as e:
+                    st.error(f"Error registering user in Supabase: {e}")
+            else:
+                st.error("Invalid OTP. Please try again.")
+        else:
+            st.warning("Please enter the OTP before verifying.")
+
 
 else:
     st.sidebar.success(f"Logged in as {st.session_state.username}")
@@ -366,6 +383,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
