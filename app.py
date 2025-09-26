@@ -278,8 +278,7 @@ if not st.session_state.logged_in:
                             # Step 3: Insert into custom 'users' table
                             supabase.table("sih").insert({
                                 "email": st.session_state.temp_email,
-                                "password_hash": hashed_pwd,
-                                "created_at": datetime.utcnow().isoformat()
+                                "password_hash": hashed_pwd
                             }).execute()
                 
                             st.success("Registration successful! Please login.")
@@ -403,6 +402,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
