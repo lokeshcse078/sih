@@ -55,7 +55,7 @@ def verify_otp(email, entered_otp):
 SARVAM_API_KEY = st.secrets["SARVAM_API_KEY"]  # Store key in Streamlit secrets
 
 def sarvam_summarize(text):
-    url = "https://dashboard.sarvam.ai/"   # Example endpoint (adjust if different)
+    url = "https://dashboard.sarvam.ai/chat"   # Example endpoint (adjust if different)
     headers = {
         "Authorization": f"Bearer {SARVAM_API_KEY}",
         "Content-Type": "application/json"
@@ -425,6 +425,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
