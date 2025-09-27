@@ -50,12 +50,10 @@ def verify_otp(email, entered_otp):
     otp_store = st.session_state.get("otp_store", {})
     return otp_store.get(email) == entered_otp
 
-# Initialize client
-client = SarvamAI(api_subscription_key=st.secrets["SARVAM_API_KEY"])
 
 def sarvam_summarize(text):
-    client = SarvamAI(
-    api_subscription_key="your_api_key_here")
+    client = SarvamAI(api_subscription_key=st.secrets["SARVAM_API_KEY"])
+
     
     response = client.chat.completions(messages=[
         {"role": "user", "content": f"summarize the given comments be more human:{text}"}])
@@ -412,6 +410,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
