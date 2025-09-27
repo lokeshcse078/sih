@@ -58,7 +58,7 @@ def sarvam_summarize(text):
     response = client.chat.completions(messages=[
         {"role": "user", "content": f"summarize the given comments and only use the words in comments to summarize also provide a heading:{text}"}])
     
-    summary = response["choices"][0]["message"]["content"]
+    summary = response.choices[0].message.content
     return summary
 
 
@@ -412,6 +412,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
