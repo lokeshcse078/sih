@@ -419,12 +419,13 @@ else:
                      final_summary = sarvam_summarize(draft_summary)
                         
                      st.markdown('<div class="black-warning">### 📝 Overall Summary (based on translated comments)</div>', unsafe_allow_html=True)
-                     st.write(final_summary))
+                     st.write(final_summary)
         else:
             st.markdown(
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
