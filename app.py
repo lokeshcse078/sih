@@ -17,6 +17,7 @@ import random
 import smtplib
 from email.message import EmailMessage
 from supabase import create_client
+from sarvamai import SarvamAI
 
 # ------------------------- Supabase Setup -------------------------
 SUPABASE_URL = st.secrets["SUPABASE_URL"]
@@ -49,31 +50,23 @@ def verify_otp(email, entered_otp):
     otp_store = st.session_state.get("otp_store", {})
     return otp_store.get(email) == entered_otp
 
-
-# ------------------------- Model Loading -------------------------
-# ------------------------- Sarvam Summarizer -------------------------
-SARVAM_API_KEY = st.secrets["SARVAM_API_KEY"]  # Store key in Streamlit secrets
+# Initialize client
+client = SarvamAI(api_subscription_key=st.secrets["SARVAM_API_KEY"])
 
 def sarvam_summarize(text):
-    url = "https://dashboard.sarvam.ai/chat"   # Example endpoint (adjust if different)
-    headers = {
-        "Authorization": f"Bearer {SARVAM_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "input": text,
-        "type": "summary",
-        "options": {
-            "length": "medium"  # can be "short", "medium", "long"
-        }
-    }
     try:
-        response = requests.post(url, headers=headers, json=payload)
-        response.raise_for_status()
-        result = response.json()
-        return result.get("summary", "No summary generated.")
+        response = client.chat.completions(
+            messages=[
+                {"role": "user", "content": f"Summarize the following text in a concise way:\n\n{text}"}
+            ]
+        )
+        # Extract assistant reply
+        if "choices" in response and len(response["choices"]) > 0:
+            return response["choices"][0]["message"]["content"]
+        return "No summary generated."
     except Exception as e:
         return f"Error using Sarvam API: {e}"
+
 
 @st.cache_data
 def load_pickle():
@@ -415,16 +408,16 @@ else:
                             fig_wc = generate_wordcloud(subset, sentiment)
                             st.pyplot(fig_wc)
                 with tab4:
-                     draft_summary = " ".join(df["Translated_Comment"].tolist()[:20])
-                     final_summary = sarvam_summarize(draft_summary)
-                        
-                     st.markdown('<div class="black-warning">### 📝 Overall Summary (based on translated comments)</div>', unsafe_allow_html=True)
-                     st.write(final_summary)
+                    draft_summary = " ".join(df["Translated_Comment"].tolist()[:20])
+                    final_summary = sarvam_summarize(draft_summary)
+                    st.markdown('<div class="black-warning">### 📝 Overall Summary (based on translated comments)</div>', unsafe_allow_html=True)
+                    st.write(final_summary)
         else:
             st.markdown(
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
