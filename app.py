@@ -5,7 +5,6 @@ import altair as alt
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt  # Only for WordCloud
 import streamlit as st
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from langdetect import detect
 import langcodes
 from deep_translator import GoogleTranslator
@@ -52,13 +51,29 @@ def verify_otp(email, entered_otp):
 
 
 # ------------------------- Model Loading -------------------------
-@st.cache_resource
-def load_summarizer():
-    model_id = "lk10308/t5"  # Hugging Face repo ID
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_id)
-    summarizer = pipeline("summarization", model=model, tokenizer=tokenizer)
-    return summarizer
+# ------------------------- Sarvam Summarizer -------------------------
+SARVAM_API_KEY = st.secrets["SARVAM_API_KEY"]  # Store key in Streamlit secrets
+
+def sarvam_summarize(text):
+    url = "https://api.sarvam.ai/summarize"   # Example endpoint (adjust if different)
+    headers = {
+        "Authorization": f"Bearer {SARVAM_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "input": text,
+        "type": "summary",
+        "options": {
+            "length": "medium"  # can be "short", "medium", "long"
+        }
+    }
+    try:
+        response = requests.post(url, headers=headers, json=payload)
+        response.raise_for_status()
+        result = response.json()
+        return result.get("summary", "No summary generated.")
+    except Exception as e:
+        return f"Error using Sarvam API: {e}"
 
 @st.cache_data
 def load_pickle():
@@ -400,18 +415,17 @@ else:
                             fig_wc = generate_wordcloud(subset, sentiment)
                             st.pyplot(fig_wc)
                 with tab4:
-                    summarizer = load_summarizer()
-                    draft_summary = " ".join(df["Translated_Comment"].tolist()[:20])
-                    input_text = "summarize: " + draft_summary
-                    final_summary = summarizer(input_text, max_length=200, min_length=60, do_sample=False)[0]["summary_text"]
-
-                    st.markdown('<div class="black-warning">### 📝 Overall Summary (based on translated comments)</div>',unsafe_allow_html=True)
-                    st.write(final_summary)
+                     draft_summary = " ".join(df["Translated_Comment"].tolist()[:20])
+                     final_summary = sarvam_summarize(draft_summary)
+                        
+                     st.markdown('<div class="black-warning">### 📝 Overall Summary (based on translated comments)</div>', unsafe_allow_html=True)
+                     st.write(final_summary))
         else:
             st.markdown(
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
