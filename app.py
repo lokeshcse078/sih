@@ -54,18 +54,13 @@ def verify_otp(email, entered_otp):
 client = SarvamAI(api_subscription_key=st.secrets["SARVAM_API_KEY"])
 
 def sarvam_summarize(text):
-    try:
-        response = client.chat.completions(
-            messages=[
-                {"role": "user", "content": f"Summarize the following text in a concise way:\n\n{text}"}
-            ]
-        )
-        # Extract assistant reply
-        if "choices" in response and len(response["choices"]) > 0:
-            return response["choices"][0]["message"]["content"]
-        return "No summary generated."
-    except Exception as e:
-        return f"Error using Sarvam API: {e}"
+    client = SarvamAI(
+    api_subscription_key="your_api_key_here")
+    
+    response = client.chat.completions(messages=[
+        {"role": "user", "content": f"summarize the given comments be more human:{text}"}])
+    
+    return response
 
 
 @st.cache_data
@@ -417,6 +412,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
