@@ -56,9 +56,11 @@ def sarvam_summarize(text):
 
     
     response = client.chat.completions(messages=[
-        {"role": "user", "content": f"summarize the given comments be more human:{text}"}])
+        {"role": "user", "content": f"summarize the given comments and only use the words in comments to summarize also provide a heading:{text}"}])
     
-    return response
+    summary = response["choices"][0]["message"]["content"]
+    return summary
+
 
 
 @st.cache_data
@@ -410,6 +412,7 @@ else:
             '<div class="black-warning">⚠ Please upload a PDF or TXT file to proceed.</div>',
             unsafe_allow_html=True)
                 
+
 
 
 
